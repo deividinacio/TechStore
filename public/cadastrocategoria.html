@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Usuários</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Cadastro de Categorias</h1>
+    <!-- Formulário de Usuário -->
+    <form id="categoria-form">
+      <input type="hidden" id="idcategoria">
+      <div>
+        <label for="nome-categoria">Informe a categoria:</label>
+        <input type="text" id="nome-categoria" required>
+      </div>
+      <div>
+        <a href="./gerenciamento.html">voltar ao início</a>
+      </div>
+      <div class="alinha-botao">
+        <button type="submit">Salvar Categoria</button>
+        <button id="listar" onclick="window.location.href='listacategoria.html'">Listar Categorias</button> <!-- Redireciona para a página de listagem -->
+      </div>
+    </form>
+
+    <!-- Botão para listar usuários -->
+  </div>
+
+  <script>
+    // Função para salvar ou atualizar usuário
+    document.getElementById('categoria-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const id = document.getElementById('idcategoria').value;
+      const nome = document.getElementById('nome-categoria').value;
+      const categoria = { nome };
+    //   if (id) {
+    // const responsePut =  await fetch(`/api/usuarios/${id}`, {
+    //       method: 'PUT',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify(usuario)
+    //     });
+    //   } else {
+     const responsePost = await fetch('/api/categorias', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(categoria)
+        });
+
+       if (responsePost.ok){
+        alert('Categoria cadastrada com sucesso');
+       }
+     // }
+      document.getElementById('categoria-form').reset();
+    });
+
+  </script>

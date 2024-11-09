@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar com CPF</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h1>Entrar</h1>
+    <form id="cpf-form" method="GET">
+      <input type="text" id="cpf" placeholder="Digite seu CPF" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('cpf-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const cpf = document.getElementById('cpf').value;
+
+  try {
+    const response = await fetch(`/api/usuarios/cpf/${cpf}`);
+ // se o usuário for 10020030040050 é adm
+    if((cpf == "10020030040050") &&  (response.status === 200)) 
+    {
+      const user = await response.json();
+      sessionStorage.setItem('userCpf', user.cpf);
+      alert('usuário administrador');
+      window.location.href = 'gerenciamento.html';
+
+      return;
+    }
+    
+    if (response.status === 200) {
+      const user = await response.json();
+      sessionStorage.setItem('userCpf', user.cpf);
+      window.location.href = 'produtos.html';
+      
+    } else {
+    
+      alert('CPF não encontrado. Verifique o número e tente novamente.');
+    }
+  } catch (error) {
+    console.error('Erro ao buscar usuário pelo CPF:', error);
+    alert('Erro ao buscar usuário. Tente novamente mais tarde.' + cpf);
+  }
+});
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lista de Categorias</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Lista de Categorias</h1>
+
+    <!-- Botão para voltar à página de cadastro -->
+    <button id="voltar-cadastro" onclick="window.location.href='/cadastrocategoria.html'">Voltar ao Cadastro</button>
+
+    <!-- Lista de Usuários -->
+    <table id="categoria-list">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Função para carregar categorias quando a página é carregada
+    document.addEventListener('DOMContentLoaded', carregarCategorias);
+
+    // Função para carregar categorias
+    async function carregarCategorias() {
+      try {
+        const response = await fetch('/api/categorias');
+        const categorias = await response.json();
+
+        const tbody = document.querySelector("#categoria-list tbody");
+        tbody.innerHTML = '';
+
+        categorias.forEach(categoria => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${categoria.idcategoria}</td>
+            <td>${categoria.nome}</td>
+            <td>
+              <button onclick="editarCategoria(${categoria.idcategoria})">Editar</button>
+              <button onclick="deletarCategoria(${categoria.idcategoria})">Deletar</button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+      }
+    }
+
+    // Função para deletar usuário
+    async function deletarCategoria(id) {
+      if (confirm('Tem certeza que deseja deletar esta categoria?')) {
+        try {
+          await fetch(`/api/categorias/${id}`, { method: 'DELETE' });
+          carregarCategorias(); // Atualiza a lista após deletar
+        } catch (error) {
+          console.error('Erro ao deletar categoria:', error);
+        }
+      }
+    }
+
+    // Função para editar usuário
+    async function editarCategoria(id) {
+    try {
+      const response = await fetch(`/api/categorias/${id}`);
+      const usuario = await response.json();
+
+      // Armazena os dados no sessionStorage e redireciona para usuarioedit.html
+      sessionStorage.setItem('categoriaEdit', JSON.stringify(usuario[0]));
+      window.location.href = '/editcategoria.html';
+    } catch (error) {
+      console.error('Erro ao carregar dados para edição:', error);
+    }
+  }
+  </script>
+</body>
+</html>

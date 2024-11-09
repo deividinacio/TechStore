@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editar Categoria</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Editar Categoria</h1>
+
+    <!-- Formulário de Edição de Usuário -->
+    <form id="usuario-edit-form">
+      <input type="hidden" id="idcategoria">
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="nome" id="nome" required>
+      </div>
+      <button type="submit">Salvar Alterações</button>
+    </form>
+
+    <!-- Botão para voltar à lista de usuários -->
+    <button id="voltar-lista" onclick="window.location.href='/listacategoria.html'">Voltar à Lista de Categorias</button>
+  </div>
+
+  <script>
+    // Carrega os dados da categoria no formulário ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      const categoriaEdit = sessionStorage.getItem('categoriaEdit');
+      if (categoriaEdit) {
+        const categoria = JSON.parse(categoriaEdit);
+        document.getElementById('idcategoria').value = categoria.idcategoria;
+        document.getElementById('nome').value = categoria.nome;
+      }
+    });
+
+    // Função para salvar as alterações da categoria
+    document.getElementById('categoria-edit-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const id = document.getElementById('dicategoria').value;
+      const nome = document.getElementById('nome').value;
+      const categoria = { nome };
+
+      try {
+        const response = await fetch(`/api/categorias/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(categoria)
+        });
+
+        if (response.ok) {  // Verifica se a resposta foi bem-sucedida
+          alert('Categoria atualizada com sucesso!');
+          window.location.href = '/listacategoria.html'; // Redireciona para a lista de categorias após salvar
+        } else {
+          const error = await response.text();
+          alert(`Erro ao atualizar categoria: ${error}`);
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar categoria:', error);
+        alert('Ocorreu um erro ao salvar as alterações.');
+      }
+    });
+  </script>
+</body>
+</html>

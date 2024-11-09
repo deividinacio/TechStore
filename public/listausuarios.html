@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lista de Usuários</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Lista de Usuários</h1>
+
+    <!-- Botão para voltar à página de cadastro -->
+    <button id="voltar-cadastro" onclick="window.location.href='/cadastrousuario.html'">Voltar ao Cadastro</button>
+
+    <!-- Lista de Usuários -->
+    <table id="usuario-list">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Email</th>
+          <th>Data de Nascimento</th>
+          <th>CPF</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Função para carregar usuários quando a página é carregada
+    document.addEventListener('DOMContentLoaded', carregarUsuarios);
+
+    // Função para carregar usuários
+    async function carregarUsuarios() {
+      try {
+        const response = await fetch('/api/usuarios');
+        const usuarios = await response.json();
+
+        const tbody = document.querySelector("#usuario-list tbody");
+        tbody.innerHTML = '';
+
+        usuarios.forEach(usuario => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${usuario.idusuario}</td>
+            <td>${usuario.email}</td>
+            <td>${usuario.data_nascimento}</td>
+            <td>${usuario.cpf}</td>
+            <td>
+              <button onclick="editarUsuario(${usuario.idusuario})">Editar</button>
+              <button onclick="deletarUsuario(${usuario.idusuario})">Deletar</button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+      }
+    }
+
+    // Função para deletar usuário
+    async function deletarUsuario(id) {
+      if (confirm('Tem certeza que deseja deletar este usuário?')) {
+        try {
+          await fetch(`/api/usuarios/${id}`, { method: 'DELETE' });
+          carregarUsuarios(); // Atualiza a lista após deletar
+        } catch (error) {
+          console.error('Erro ao deletar usuário:', error);
+        }
+      }
+    }
+
+    // Função para editar usuário
+    async function editarUsuario(id) {
+    try {
+      const response = await fetch(`/api/usuarios/${id}`);
+      const usuario = await response.json();
+
+      // Armazena os dados no sessionStorage e redireciona para usuarioedit.html
+      sessionStorage.setItem('usuarioEdit', JSON.stringify(usuario[0]));
+      window.location.href = '/editusuario.html';
+    } catch (error) {
+      console.error('Erro ao carregar dados para edição:', error);
+    }
+  }
+  </script>
+</body>
+</html>
