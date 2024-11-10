@@ -10,6 +10,18 @@ class Produto {
     db.query('SELECT * FROM produto', callback);
   }
 
+  static findAllJoin(callback) {
+    db.query('SELECT produto.idproduto, ' + 
+     'produto.nome, ' + 
+     'produto.preco, ' +  
+     'produto.idcategoria, ' +  
+     'categoria.nome as categoria_nome ' +  
+     'from produto ' + 
+     'inner join categoria ' +  
+     'on produto.idcategoria = categoria.idcategoria', callback);
+  }
+
+
   static findById(idproduto, callback) {
     db.query('SELECT * FROM produto WHERE idproduto = ?', [idproduto], callback);
   }

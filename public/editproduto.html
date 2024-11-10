@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Produto</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Editar Produto</h1>
+    <form id="produto-edit-form">
+      <input type="hidden" id="idproduto">
+      
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" required>
+      </div>
+    
+      
+      <div class="form-group">
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" step="0.01" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="idcategoria">Categoria:</label>
+        <select id="idcategoria" required>
+          <!-- As categorias serão carregadas aqui -->
+        </select>
+      </div>
+      
+      <button type="submit">Salvar Alterações</button>
+    </form>
+
+    <!-- Botão para voltar à lista de produtos -->
+    <button onclick="window.location.href='listaprodutos.html'">Voltar à Lista de Produtos</button>
+    <div>
+      <a href="./gerenciamento.html">Voltar ao Início</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await carregarCategorias();
+      carregarDadosProduto();
+    });
+
+    async function carregarCategorias() {
+      try {
+        const response = await fetch('/api/categorias');
+        const categorias = await response.json();
+        const categoriaSelect = document.getElementById('idcategoria');
+        
+        categorias.forEach(categoria => {
+          const option = document.createElement('option');
+          option.value = categoria.idcategoria;
+          option.textContent = `${categoria.idcategoria} - ${categoria.nome}`;
+          categoriaSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        alert('Erro ao carregar categorias. Verifique o console.');
+      }
+    }
+
+    function carregarDadosProduto() {
+      const produtoEdit = sessionStorage.getItem('produtoEdit');
+      if (produtoEdit) {
+        const produto = JSON.parse(produtoEdit);
+        document.getElementById('idproduto').value = produto.idproduto;
+        document.getElementById('nome').value = produto.nome;
+       // document.getElementById('descricao').value = produto.descricao;
+        document.getElementById('preco').value = produto.preco;
+        document.getElementById('idcategoria').value = produto.idcategoria;
+      }
+    }
+
+    document.getElementById('produto-edit-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const id = document.getElementById('idproduto').value;
+      const nome = document.getElementById('nome').value;
+    //  const descricao = document.getElementById('descricao').value;
+      const preco = parseFloat(document.getElementById('preco').value);
+      const idcategoria = document.getElementById('idcategoria').value;
+      
+      const produto = { nome, preco, idcategoria };
+
+      try {
+        const response = await fetch(`/api/produtos/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(produto)
+        });
+
+        if (response.ok) {
+          alert('Produto atualizado com sucesso!');
+          window.location.href = '/listaprodutos.html';
+        } else {
+          const error = await response.text();
+          alert(`Erro ao atualizar produto: ${error}`);
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar produto:', error);
+        alert('Ocorreu um erro ao salvar as alterações.');
+      }
+    });
+  </script>
+</body>
+</html>

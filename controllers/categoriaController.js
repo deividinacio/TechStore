@@ -24,6 +24,8 @@ exports.getAllCategorias = (req, res) => {
   });
 };
 
+
+
 exports.getCategoriaById = (req, res) => {
   Categoria.findById(req.params.idcategoria, (err, results) => {
     if (err) {
