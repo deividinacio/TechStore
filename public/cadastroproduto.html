@@ -19,7 +19,7 @@
       </div>
       <div>
         <label for="preco-produto">Preço:</label>
-        <input type="number" id="preco-produto" required>
+        <input type="number" id="preco-produto" step="0.010" required>
       </div>
       <div>
         <label for="categoria-produto">Categoria:</label>
@@ -33,3 +33,39 @@
         <button id="listar" onclick="window.location.href='listaprodutos.html'">Listar Produtos</button> <!-- Redireciona para a página de listagem -->
       </div>
     </form>
+
+
+    <script>
+      // Carregar categorias no select ao carregar a página
+      async function carregarCategorias() {
+        const response = await fetch('/api/categorias');
+        const categorias = await response.json();
+        const selectCategoria = document.getElementById('categoria-produto');
+        categorias.forEach(categoria => {
+          const option = document.createElement('option');
+          option.value = categoria.idcategoria;
+          option.textContent = categoria.nome;
+          selectCategoria.appendChild(option);
+        });
+      }
+      carregarCategorias();
+  
+      // Submeter o formulário de produto
+      document.getElementById('produto-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('nome-produto').value;
+        const preco = document.getElementById('preco-produto').value;
+        const idcategoria = document.getElementById('categoria-produto').value;
+  
+        try {
+          const response = await fetch('/api/produtos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, preco, idcategoria })
+          });
+          if (response.ok) alert('Produto cadastrado com sucesso!');
+        } catch (error) {
+          alert('Erro ao cadastrar produto.');
+        }
+      });
+    </script>
