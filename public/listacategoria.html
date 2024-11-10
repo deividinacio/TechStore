@@ -49,7 +49,7 @@
             <td>${categoria.idcategoria}</td>
             <td>${categoria.nome}</td>
             <td>
-              <button onclick="editarCategoria(${categoria.idcategoria})">Editar</button>
+              <button onclick="editarCategoria(${categoria.idcategoria},'${categoria.nome}')">Editar</button>
               <button onclick="deletarCategoria(${categoria.idcategoria})">Deletar</button>
             </td>
           `;
@@ -73,12 +73,13 @@
       }
     }
 
-    // Função para editar categoria
+    //Função para editar categoria
 function editarCategoria(idcategoria, nome) {
   const categoria = { idcategoria, nome };
   sessionStorage.setItem('categoriaEdit', JSON.stringify(categoria));
   window.location.href = '/editcategoria.html';  // Redireciona para a página de edição
 }
+
 
   </script>
 </body>

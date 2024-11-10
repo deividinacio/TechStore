@@ -28,8 +28,7 @@
     // Carrega os dados da categoria ao carregar a página de edição
     document.addEventListener('DOMContentLoaded', () => {
       const categoriaEdit = sessionStorage.getItem('categoriaEdit');
-      console.log("Dados da categoria no sessionStorage:", categoriaEdit); // Verificação
-
+    
       if (categoriaEdit) {
         const categoria = JSON.parse(categoriaEdit);
         document.getElementById('idcategoria').value = categoria.idcategoria || ''; // Insere o ID se disponível

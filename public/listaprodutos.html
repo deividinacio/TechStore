@@ -80,21 +80,6 @@
       }
     }
 
-//     function editarProduto(idproduto) {
-//   fetch(`/api/produtos/${idproduto}`)
-//     .then(response => response.json())
-//     .then(produto => {
-//       console.log("Produto para edição:", produto); // Verifica o conteúdo antes de salvar
-//       sessionStorage.setItem('produtoEdit', JSON.stringify(produto));
-//       window.location.href = '/editproduto.html';
-//     })
-//     .catch(error => {
-//       console.error('Erro ao carregar produto para edição:', error);
-//       alert('Erro ao carregar o produto para edição.');
-//     });
-// }
-
-
 async function editarProduto(id) {
     try {
       const response = await fetch(`/api/produtos/${id}`);
