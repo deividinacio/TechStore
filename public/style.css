@@ -10,13 +10,14 @@
   }
   
   .container {
-    width: 90%;
-    max-width: 600px;
+    width: 60%;
+    max-width: 90%;
     margin: 20px auto;
     padding: 20px;
     background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(8, 8, 16, 0.5);
     border-radius: 8px;
+    border: solid 1px;
   }
   
   h1, h2 {
@@ -80,10 +81,10 @@
   }
 
   button#btn-cat{
-    background-color: #220fca;
+    background-color: #950fca;
   }
   button#btn-cat:hover{
-    background-color: #5e73ad;
+    background-color: #7c66ca;
   }
     
   button:hover {
@@ -98,7 +99,7 @@
   
   th, td {
     padding: 10px;
-    text-align: left;
+    text-align: center;
     border: 1px solid #ddd;
   }
   

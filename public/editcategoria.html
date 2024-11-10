@@ -9,36 +9,39 @@
 <body>
   <div class="container">
     <h1>Editar Categoria</h1>
-
-    <!-- Formulário de Edição de Usuário -->
-    <form id="usuario-edit-form">
+    <form id="categoria-edit-form">
       <input type="hidden" id="idcategoria">
       <div class="form-group">
         <label for="nome">Nome:</label>
-        <input type="nome" id="nome" required>
+        <input type="text" id="nome" required>
       </div>
       <button type="submit">Salvar Alterações</button>
     </form>
 
-    <!-- Botão para voltar à lista de usuários -->
     <button id="voltar-lista" onclick="window.location.href='/listacategoria.html'">Voltar à Lista de Categorias</button>
+    <div>
+      <a href="./gerenciamento.html">Voltar ao Início</a>
+    </div>
   </div>
 
   <script>
-    // Carrega os dados da categoria no formulário ao carregar a página
+    // Carrega os dados da categoria ao carregar a página de edição
     document.addEventListener('DOMContentLoaded', () => {
       const categoriaEdit = sessionStorage.getItem('categoriaEdit');
+      console.log("Dados da categoria no sessionStorage:", categoriaEdit); // Verificação
+
       if (categoriaEdit) {
         const categoria = JSON.parse(categoriaEdit);
-        document.getElementById('idcategoria').value = categoria.idcategoria;
-        document.getElementById('nome').value = categoria.nome;
+        document.getElementById('idcategoria').value = categoria.idcategoria || ''; // Insere o ID se disponível
+        document.getElementById('nome').value = categoria.nome || ''; // Insere o nome se disponível
+      } else {
+        alert("Erro: Nenhuma categoria encontrada para editar.");
       }
     });
 
-    // Função para salvar as alterações da categoria
     document.getElementById('categoria-edit-form').addEventListener('submit', async (event) => {
       event.preventDefault();
-      const id = document.getElementById('dicategoria').value;
+      const id = document.getElementById('idcategoria').value;
       const nome = document.getElementById('nome').value;
       const categoria = { nome };
 
@@ -49,9 +52,9 @@
           body: JSON.stringify(categoria)
         });
 
-        if (response.ok) {  // Verifica se a resposta foi bem-sucedida
+        if (response.ok) {
           alert('Categoria atualizada com sucesso!');
-          window.location.href = '/listacategoria.html'; // Redireciona para a lista de categorias após salvar
+          window.location.href = '/listacategoria.html';
         } else {
           const error = await response.text();
           alert(`Erro ao atualizar categoria: ${error}`);

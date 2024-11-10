@@ -12,6 +12,9 @@
 
     <!-- Botão para voltar à página de cadastro -->
     <button id="voltar-cadastro" onclick="window.location.href='/cadastrocategoria.html'">Voltar ao Cadastro</button>
+    <div>
+      <a href="./gerenciamento.html">voltar ao início</a>
+    </div>
 
     <!-- Lista de Usuários -->
     <table id="categoria-list">
@@ -19,6 +22,7 @@
         <tr>
           <th>ID</th>
           <th>Nome</th>
+          <th>Ação</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -69,19 +73,13 @@
       }
     }
 
-    // Função para editar usuário
-    async function editarCategoria(id) {
-    try {
-      const response = await fetch(`/api/categorias/${id}`);
-      const usuario = await response.json();
+    // Função para editar categoria
+function editarCategoria(idcategoria, nome) {
+  const categoria = { idcategoria, nome };
+  sessionStorage.setItem('categoriaEdit', JSON.stringify(categoria));
+  window.location.href = '/editcategoria.html';  // Redireciona para a página de edição
+}
 
-      // Armazena os dados no sessionStorage e redireciona para usuarioedit.html
-      sessionStorage.setItem('categoriaEdit', JSON.stringify(usuario[0]));
-      window.location.href = '/editcategoria.html';
-    } catch (error) {
-      console.error('Erro ao carregar dados para edição:', error);
-    }
-  }
   </script>
 </body>
 </html>
