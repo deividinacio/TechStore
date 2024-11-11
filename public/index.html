@@ -18,38 +18,36 @@
 
   <script>
     document.getElementById('cpf-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
+      e.preventDefault();
+
+      const cpf = document.getElementById('cpf').value;
+      console.log(`CPF digitado: ${cpf}`);
+
+      try {
+        const response = await fetch(`/api/usuarios/cpf/${cpf}`);
+        
+        if (response.ok) {
+        const data = await response.json();
   
-  const cpf = document.getElementById('cpf').value;
-
-  try {
-    const response = await fetch(`/api/usuarios/cpf/${cpf}`);
- // se o usuário for 10020030040050 é adm
-    if((cpf == "10020030040050") &&  (response.status === 200)) 
-    {
-      const user = await response.json();
-      sessionStorage.setItem('userCpf', user.cpf);
-      alert('usuário administrador');
-      window.location.href = 'gerenciamento.html';
-
-      return;
-    }
-    
-    if (response.status === 200) {
-      const user = await response.json();
-      sessionStorage.setItem('userCpf', user.cpf);
-      window.location.href = 'produtos.html';
-      
-    } else {
-    
-      alert('CPF não encontrado. Verifique o número e tente novamente.');
-    }
-  } catch (error) {
-    console.error('Erro ao buscar usuário pelo CPF:', error);
-    alert('Erro ao buscar usuário. Tente novamente mais tarde.' + cpf);
-  }
-});
-
+              if (data.length > 0) {
+              const user = data[0]; // Acessa o primeiro item do array
+             // alert('Usuário encontrado: ' + user.idusuario);
+          
+              // Continua com a lógica para armazenar o usuário e redirecionar
+              sessionStorage.setItem('userCpf', user.cpf);
+              sessionStorage.setItem('userID', user.idusuario);
+              window.location.href = 'produtos.html';
+              } else {
+              console.log('Usuário não encontrado.');
+              alert('CPF não encontrado. Verifique o número e tente novamente.');
+            }
+        }
+   
+      } catch (error) {
+        console.error('Erro ao buscar usuário pelo CPF:', error);
+        alert(`Erro ao buscar usuário: ${error.message}`);
+      }
+    });
   </script>
 </body>
 </html>

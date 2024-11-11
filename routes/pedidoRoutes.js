@@ -1,14 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const pedidoController = require('../controllers/pedidoController');
+// // routes/pedidoRoutes.js
+// const express = require('express');
+// const router = express.Router();
+// const PedidoController = require('../controllers/pedidoController');
 
-// Listar todos os pedidos
-router.get('/', pedidoController.listar);
+// // Rota para criar o pedido
+// router.post('/pedidos', PedidoController.fazerPedido);
 
-// Criar um novo pedido
-router.post('/', pedidoController.criar);
-
-// Listar todos os pedidos de um usuário específico
-router.get('/:idusuario', pedidoController.listarPorUsuario);
-
-module.exports = router;
+// module.exports = router;

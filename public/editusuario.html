@@ -19,7 +19,7 @@
       </div>
       <div class="form-group">
         <label for="data_nascimento">Data de Nascimento:</label>
-        <input type="text" id="data_nascimento" required>
+        <input type="date" id="data_nascimento" required>
       </div>
       <div class="form-group">
         <label for="cpf">CPF:</label>
@@ -35,6 +35,8 @@
   </div>
 
   <script>
+
+    //const dataNascimentoISO = "2024-11-12T03:00:00.000Z"; 
     // Carrega os dados do usuário no formulário ao carregar a página
     document.addEventListener('DOMContentLoaded', () => {
       const usuarioEdit = sessionStorage.getItem('usuarioEdit');
@@ -42,10 +44,12 @@
         const usuario = JSON.parse(usuarioEdit);
         document.getElementById('idusuario').value = usuario.idusuario;
         document.getElementById('email').value = usuario.email;
-        document.getElementById('data_nascimento').value = usuario.data_nascimento;
+        document.getElementById('data_nascimento').value = formatarDataParaInput(usuario.data_nascimento);
         document.getElementById('cpf').value = usuario.cpf;
       }
     });
+
+    
 
     // Função para salvar as alterações do usuário
     document.getElementById('usuario-edit-form').addEventListener('submit', async (event) => {
@@ -76,6 +80,16 @@
         alert('Ocorreu um erro ao salvar as alterações.');
       }
     });
+
+    //formata data para mes ano e dia 
+    function formatarDataParaInput(dataISO) {
+    const data = new Date(dataISO);
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês de 0-11 para 1-12
+    const dia = String(data.getDate()).padStart(2, '0'); // Dia com dois dígitos
+    return `${ano}-${mes}-${dia}`; // Retorna no formato YYYY-MM-DD
+}
+
   </script>
 </body>
 </html>

@@ -1,22 +1,31 @@
-const Pedido = require('../models/pedidoModel');
+// // controllers/pedidoController.js
+// const PedidoModel = require('../models/pedidoModel');
 
-exports.listar = (req, res) => {
-  Pedido.listar((error, results) => {
-    if (error) return res.status(500).send(error);
-    res.json(results);
-  });
-};
+// const PedidoController = {
+//   // Função para processar o pedido
+//   fazerPedido: async (req, res) => {
+//     const { itens } = req.body;  // Itens enviados pelo frontend
+ 
+//     const idusuario = sessionStorage.getItem('userID'); // userID // Pega o ID do usuário da sessão
 
-exports.listarPorUsuario = (req, res) => {
-  Pedido.listarPorUsuario(req.params.idusuario, (error, results) => {
-    if (error) return res.status(500).send(error);
-    res.json(results);
-  });
-};
+//     if (!idusuario) {
+//       return res.status(401).json({ error: 'Usuário não autenticado' });
+//     }
 
-exports.criar = (req, res) => {
-  Pedido.criar(req.body, (error, results) => {
-    if (error) return res.status(500).send(error);
-    res.status(201).send({ message: 'Pedido criado com sucesso!' });
-  });
-};
+//     try {
+//       // Criação do pedido
+//       const idpedido = await PedidoModel.criar(idusuario);
+
+//       // Adiciona os produtos ao pedido
+//       await PedidoModel.adicionarProdutos(idpedido, itens);
+
+//       // Retorna a resposta ao frontend
+//       res.status(200).json({ message: 'Pedido realizado com sucesso', idpedido });
+//     } catch (error) {
+//       console.error('Erro ao processar pedido:', error);
+//       res.status(500).json({ error: 'Erro ao processar pedido' });
+//     }
+//   }
+// };
+
+// module.exports = PedidoController;

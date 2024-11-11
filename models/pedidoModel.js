@@ -1,20 +1,35 @@
-const db = require('../config/db');
+// // models/pedidoModel.js
+// const db = require('../config/db');  // Assumindo que você tenha uma configuração de banco de dados
 
-const Pedido = {
-  listar: (callback) => {
-    db.query('SELECT * FROM pedido', callback);
-  },
-  listarPorUsuario: (idusuario, callback) => {
-    db.query('SELECT * FROM pedido WHERE idusuario = ?', [idusuario], callback);
-  },
-  criar: (dados, callback) => {
-    const { idusuario, data_pedido, status } = dados;
-    db.query(
-      'INSERT INTO pedido (idusuario, data_pedido, status) VALUES (?, ?, ?)',
-      [idusuario, data_pedido, status],
-      callback
-    );
-  }
-};
+// const PedidoModel = {
+//   // Função para criar o pedido
+//   criar: async (idusuario) => {
+//     try {
+//       const [result] = await db.execute(
+//         'INSERT INTO pedido (idusuario) VALUES (?)', 
+//         [idusuario]
+//       );
+//       return result.insertId;  // Retorna o ID do pedido criado
+//     } catch (error) {
+//       console.error('Erro ao criar pedido:', error);
+//       throw error;
+//     }
+//   },
 
-module.exports = Pedido;
+//   // Função para adicionar produtos ao pedido
+//   adicionarProdutos: async (idpedido, itens) => {
+//     try {
+//       for (let item of itens) {
+//         await db.execute(
+//           'INSERT INTO pedido_produto (idpedido, idproduto, quantidade) VALUES (?, ?, ?)',
+//           [idpedido, item.idproduto, item.quantidade]
+//         );
+//       }
+//     } catch (error) {
+//       console.error('Erro ao adicionar produtos ao pedido:', error);
+//       throw error;
+//     }
+//   }
+// };
+
+// module.exports = PedidoModel;
