@@ -19,21 +19,21 @@
       </div>
       <div>
         <label for="preco-produto">Preço:</label>
-        <input type="number" id="preco-produto" step="0.010" required>
+        <input type="number" id="preco-produto" step="0.01" required>
       </div>
       <div>
         <label for="categoria-produto">Categoria:</label>
         <select id="categoria-produto" required></select>
       </div>
       <div>
-        <a href="./gerenciamento.html">voltar ao início</a>
+        <a href="./gerenciamento.html">Voltar ao início</a>
       </div>
       <div class="alinha-botao">
-        <button type="submit">Cadatrar Produto</button>
-        <button id="listar" onclick="window.location.href='listaprodutos.html'">Listar Produtos</button> <!-- Redireciona para a página de listagem -->
+        <button type="submit">Cadastrar Produto</button>
+        <button type="button" id="listar" onclick="window.location.href='listaprodutos.html'">Listar Produtos</button>
+        <!-- Redireciona para a página de listagem sem enviar o formulário -->
       </div>
     </form>
-
 
     <script>
       // Carregar categorias no select ao carregar a página
@@ -63,9 +63,15 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, preco, idcategoria })
           });
-          if (response.ok) alert('Produto cadastrado com sucesso!');
+          if (response.ok) {
+            alert('Produto cadastrado com sucesso!');
+            document.getElementById('produto-form').reset(); // Limpa o formulário após o cadastro
+          }
         } catch (error) {
           alert('Erro ao cadastrar produto.');
         }
       });
     </script>
+  </div>
+</body>
+</html>

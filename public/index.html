@@ -25,13 +25,21 @@
 
       try {
         const response = await fetch(`/api/usuarios/cpf/${cpf}`);
+
+     
         
         if (response.ok) {
         const data = await response.json();
   
               if (data.length > 0) {
               const user = data[0]; // Acessa o primeiro item do array
-             // alert('Usuário encontrado: ' + user.idusuario);
+              
+              if(user.cpf == 10020030040050){
+                alert('Usuário administrador');
+                 window.location.href = 'gerenciamento.html';
+                 return;
+
+              }
           
               // Continua com a lógica para armazenar o usuário e redirecionar
               sessionStorage.setItem('userCpf', user.cpf);

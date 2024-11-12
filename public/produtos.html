@@ -9,93 +9,86 @@
 <body>
   <div class="container">
     <h1>Produtos</h1>
-
-    <!-- Tabela de Produtos -->
-    <table id="tabela-produtos">
+    <table id="produtos-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Nome</th>
+          <th>Produto</th>
           <th>Preço</th>
           <th>Quantidade</th>
           <th>Ação</th>
         </tr>
       </thead>
       <tbody>
-        <!-- Produtos serão carregados aqui -->
+        <!-- Produtos serão listados aqui -->
       </tbody>
     </table>
-
-    <button onclick="enviarPedido()">Fazer Pedido</button>
+    <button onclick="fazerPedido()">Fazer Pedido</button>
   </div>
 
   <script>
-    // Armazena os itens do pedido
-    const pedido = [];
+    const produtosSelecionados = [];
 
+    // Carrega a lista de produtos
     async function carregarProdutos() {
       try {
         const response = await fetch('/api/produtos');
         const produtos = await response.json();
 
-        const tbody = document.getElementById('tabela-produtos').querySelector('tbody');
-        tbody.innerHTML = '';  // Limpa a tabela antes de preencher
+        const tabela = document.getElementById('produtos-table').querySelector('tbody');
+        tabela.innerHTML = '';
 
         produtos.forEach(produto => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${produto.idproduto}</td>
             <td>${produto.nome}</td>
             <td>R$ ${produto.preco}</td>
             <td>
               <input type="number" id="quantidade-${produto.idproduto}" min="1" value="1">
             </td>
             <td>
-              <button onclick="adicionarAoPedido(${produto.idproduto}, '${produto.nome}', ${produto.preco})">Adicionar ao Pedido</button>
+              <button onclick="adicionarAoPedido(${produto.idproduto})">Adicionar</button>
             </td>
           `;
-          tbody.appendChild(tr);
+          tabela.appendChild(tr);
         });
       } catch (error) {
         console.error('Erro ao carregar produtos:', error);
       }
     }
 
-    function adicionarAoPedido(id, nome, preco) {
-      const quantidade = document.getElementById(`quantidade-${id}`).value;
-      const item = { id, nome, preco, quantidade: parseInt(quantidade) };
-
-      // Verifica se o produto já está no pedido e atualiza a quantidade
-      const itemExistente = pedido.find(produto => produto.id === id);
-      if (itemExistente) {
-        itemExistente.quantidade += item.quantidade;
-      } else {
-        pedido.push(item);
-      }
-
-      alert(`Produto "${nome}" adicionado ao pedido com quantidade ${quantidade}.`);
+    // Adiciona o produto ao pedido
+    function adicionarAoPedido(idproduto) {
+      const quantidade = document.getElementById(`quantidade-${idproduto}`).value;
+      produtosSelecionados.push({ idproduto, quantidade: parseInt(quantidade) });
+      alert('Produto adicionado ao pedido!');
     }
 
-    async function enviarPedido() {
-      if (pedido.length === 0) {
-        alert('Nenhum produto foi adicionado ao pedido.');
+    // Envia o pedido
+    async function fazerPedido() {
+      const idusuario = sessionStorage.getItem('userID');
+      if (!idusuario) {
+        alert('Usuário não logado.');
+        return;
+      }
+
+      if (produtosSelecionados.length === 0) {
+        alert('Nenhum produto foi selecionado.');
         return;
       }
 
       try {
-        const response = await fetch('/api/pedidos', {
+        const response = await fetch('/api/pedidos/criar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ itens: pedido })
+          body: JSON.stringify({ idusuario, produtos: produtosSelecionados })
         });
 
+        const data = await response.json();
         if (response.ok) {
-          alert('Pedido enviado com sucesso!');
-          pedido.length = 0; // Limpa o array de pedido
-          window.location.href = 'pedidos.html';
+          alert(`Pedido criado com sucesso! ID do pedido: ${data.idpedido}`);
+          produtosSelecionados.length = 0; // Limpa os itens do pedido
         } else {
-          const errorData = await response.json();
-          alert(`Erro ao enviar pedido: ${errorData.error}`);
+          alert(data.message || 'Erro ao criar pedido.');
         }
       } catch (error) {
         console.error('Erro ao enviar pedido:', error);
