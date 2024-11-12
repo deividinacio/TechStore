@@ -3,100 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Produtos</title>
+  <title>Fazer Pedido</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Produtos</h1>
-    <table id="produtos-table">
-      <thead>
-        <tr>
-          <th>Produto</th>
-          <th>Preço</th>
-          <th>Quantidade</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Produtos serão listados aqui -->
-      </tbody>
-    </table>
-    <button onclick="fazerPedido()">Fazer Pedido</button>
-  </div>
+      <h1>Produtos Disponíveis</h1>
+      <table id="produtos-table" border="1">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
+            <th>Adicionar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Produtos serão inseridos aqui -->
+        </tbody>
+      </table>
+      <button onclick="fazerPedido()" class="submit">Finalizar Pedido</button>
+</div>
 
   <script>
-    const produtosSelecionados = [];
+    let carrinho = [];
 
-    // Carrega a lista de produtos
     async function carregarProdutos() {
-      try {
-        const response = await fetch('/api/produtos');
-        const produtos = await response.json();
+      const response = await fetch('/api/produtos');
+      const produtos = await response.json();
+      const tabela = document.getElementById('produtos-table').querySelector('tbody');
 
-        const tabela = document.getElementById('produtos-table').querySelector('tbody');
-        tabela.innerHTML = '';
-
-        produtos.forEach(produto => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${produto.nome}</td>
-            <td>R$ ${produto.preco}</td>
-            <td>
-              <input type="number" id="quantidade-${produto.idproduto}" min="1" value="1">
-            </td>
-            <td>
-              <button onclick="adicionarAoPedido(${produto.idproduto})">Adicionar</button>
-            </td>
-          `;
-          tabela.appendChild(tr);
-        });
-      } catch (error) {
-        console.error('Erro ao carregar produtos:', error);
-      }
+      produtos.forEach((produto) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${produto.nome}</td>
+          <td>${produto.preco}</td>
+          <td><input type="number" min="1" value="1" id="quantidade-${produto.idproduto}"></td>
+          <td><button onclick="adicionarAoCarrinho(${produto.idproduto}, '${produto.nome}', ${produto.preco})">Adicionar</button></td>
+        `;
+        tabela.appendChild(row);
+      });
     }
 
-    // Adiciona o produto ao pedido
-    function adicionarAoPedido(idproduto) {
-      const quantidade = document.getElementById(`quantidade-${idproduto}`).value;
-      produtosSelecionados.push({ idproduto, quantidade: parseInt(quantidade) });
-      alert('Produto adicionado ao pedido!');
+    function adicionarAoCarrinho(idproduto, nome, preco) {
+      const quantidade = parseInt(document.getElementById(`quantidade-${idproduto}`).value);
+      carrinho.push({ idproduto, quantidade });
+      alert(`Produto ${nome} adicionado ao carrinho`);
     }
 
-    // Envia o pedido
     async function fazerPedido() {
-      const idusuario = sessionStorage.getItem('userID');
-      if (!idusuario) {
-        alert('Usuário não logado.');
+      const userID = sessionStorage.getItem('userID'); // Pega o userID da sessão
+      
+      if (!userID) {
+        alert('Usuário não autenticado!');
         return;
       }
 
-      if (produtosSelecionados.length === 0) {
-        alert('Nenhum produto foi selecionado.');
-        return;
-      }
+      const response = await fetch('/api/pedidos/criar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': userID // Envia o userID pelo cabeçalho
+        },
+        body: JSON.stringify({ produtos: carrinho })
+      });
 
-      try {
-        const response = await fetch('/api/pedidos/criar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idusuario, produtos: produtosSelecionados })
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          alert(`Pedido criado com sucesso! ID do pedido: ${data.idpedido}`);
-          produtosSelecionados.length = 0; // Limpa os itens do pedido
-        } else {
-          alert(data.message || 'Erro ao criar pedido.');
-        }
-      } catch (error) {
-        console.error('Erro ao enviar pedido:', error);
-        alert('Erro ao enviar pedido.');
+      const data = await response.json();
+      if (response.ok) {
+        alert(`Pedido criado com sucesso! ID: ${data.idpedido}`);
+      } else {
+        console.error('Erro ao fazer pedido:', data);
+        alert(data.message);
       }
     }
 
-    document.addEventListener('DOMContentLoaded', carregarProdutos);
+    carregarProdutos();
   </script>
 </body>
 </html>
