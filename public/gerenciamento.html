@@ -8,7 +8,10 @@
 </head>
 <body>
   <div class="container">
-    <h1>Informe o que deseja gerenciar</h1>
+
+    <h1 id="h1Name"></h1>
+    <h4>Informe o que deseja gerenciar</h4>
+
 
     <!-- Gerenciamento -->
  
@@ -17,8 +20,15 @@
         <button id="btn-user" onclick="window.location.href='cadastrousuario.html'">Usuarios</button> <!-- Redireciona para a página de listagem -->
         <button id="listar" onclick="window.location.href='cadastroproduto.html'">Produtos</button> <!-- Redireciona para a página de listagem -->
         <button id="btn-cat" onclick="window.location.href='cadastrocategoria.html'">Categorias</button> <!-- Redireciona para a página de listagem -->
+        <button id="listar" onclick="window.location.href='listapedidos.html'">Pedidos</button> <!-- Redireciona para a página de listagem -->
+
       </div>
    
 
     <!-- Botão para listar usuários -->
   </div>
+  <script>
+    h1Name.innerHTML = "Bem vindo(a) " + sessionStorage.getItem('userNome');
+  </script>
+</body>
+</html>

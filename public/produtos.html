@@ -8,24 +8,46 @@
 </head>
 <body>
   <div class="container">
-      <h1>Produtos Disponíveis</h1>
-      <table id="produtos-table" border="1">
-        <thead>
-          <tr>
-            <th>Produto</th>
-            <th>Preço</th>
-            <th>Quantidade</th>
-            <th>Adicionar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Produtos serão inseridos aqui -->
-        </tbody>
-      </table>
-      <button onclick="fazerPedido()" class="submit">Finalizar Pedido</button>
-</div>
+    <h1 id="h1Name"></h1>
+    <h3>Temos Produtos Disponíveis</h3>
+    <table id="produtos-table" border="1">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Preço</th>
+          <th>Quantidade</th>
+          <th>Adicionar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Produtos serão inseridos aqui -->
+      </tbody>
+    </table>
+    <h2>Carrinho</h2>
+    <table id="carrinho-table" border="1">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Quantidade</th>
+          <th>Remover</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Itens do carrinho serão inseridos aqui -->
+      </tbody>
+    </table>
+    <button onclick="fazerPedido()" class="submit">Finalizar Pedido</button>
+    <button onclick="window.location.href='pedidos.html'">Listar Pedidos</button> <!-- Novo botão -->
+    <div>
+      <a href="./index.html">Deslogar-se</a>
+    </div>
+  </div>
 
   <script>
+
+
+    h1Name.innerHTML = "Olá " + sessionStorage.getItem('userNome');
+
     let carrinho = [];
 
     async function carregarProdutos() {
@@ -47,12 +69,40 @@
 
     function adicionarAoCarrinho(idproduto, nome, preco) {
       const quantidade = parseInt(document.getElementById(`quantidade-${idproduto}`).value);
-      carrinho.push({ idproduto, quantidade });
+      const produtoExistente = carrinho.find(item => item.idproduto === idproduto);
+
+      if (produtoExistente) {
+        produtoExistente.quantidade += quantidade;
+      } else {
+        carrinho.push({ idproduto, nome, preco, quantidade });
+      }
+      
       alert(`Produto ${nome} adicionado ao carrinho`);
+      exibirCarrinho();
+    }
+
+    function exibirCarrinho() {
+      const tabelaCarrinho = document.getElementById('carrinho-table').querySelector('tbody');
+      tabelaCarrinho.innerHTML = '';
+
+      carrinho.forEach((item) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.nome}</td>
+          <td>${item.quantidade}</td>
+          <td><button id="btnRemover" onclick="removerDoCarrinho(${item.idproduto})">Remover</button></td>
+        `;
+        tabelaCarrinho.appendChild(row);
+      });
+    }
+
+    function removerDoCarrinho(idproduto) {
+      carrinho = carrinho.filter(item => item.idproduto !== idproduto);
+      exibirCarrinho();
     }
 
     async function fazerPedido() {
-      const userID = sessionStorage.getItem('userID'); // Pega o userID da sessão
+      const userID = sessionStorage.getItem('userID');
       
       if (!userID) {
         alert('Usuário não autenticado!');
@@ -63,14 +113,16 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'user-id': userID // Envia o userID pelo cabeçalho
+          'user-id': userID
         },
         body: JSON.stringify({ produtos: carrinho })
       });
 
       const data = await response.json();
       if (response.ok) {
-        alert(`Pedido criado com sucesso! ID: ${data.idpedido}`);
+        alert(`Pedido criado com sucesso!`);
+        carrinho = []; // Limpa o carrinho após finalizar o pedido
+        exibirCarrinho(); // Atualiza a exibição do carrinho
       } else {
         console.error('Erro ao fazer pedido:', data);
         alert(data.message);

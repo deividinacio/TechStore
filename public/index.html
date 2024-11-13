@@ -21,8 +21,7 @@
       e.preventDefault();
 
       const cpf = document.getElementById('cpf').value;
-      console.log(`CPF digitado: ${cpf}`);
-
+      
       try {
         const response = await fetch(`/api/usuarios/cpf/${cpf}`);
 
@@ -33,6 +32,10 @@
   
               if (data.length > 0) {
               const user = data[0]; // Acessa o primeiro item do array
+
+              sessionStorage.setItem('userNome', user.nome);
+              sessionStorage.setItem('userCpf', user.cpf);
+              sessionStorage.setItem('userID', user.idusuario);
               
               if(user.cpf == 10020030040050){
                 alert('Usuário administrador');
@@ -42,9 +45,8 @@
               }
           
               // Continua com a lógica para armazenar o usuário e redirecionar
-              sessionStorage.setItem('userCpf', user.cpf);
-              sessionStorage.setItem('userID', user.idusuario);
               window.location.href = 'produtos.html';
+             
               } else {
               console.log('Usuário não encontrado.');
               alert('CPF não encontrado. Verifique o número e tente novamente.');

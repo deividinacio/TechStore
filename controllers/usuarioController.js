@@ -1,8 +1,8 @@
 const Usuario = require('../models/usuarioModel');
 
 exports.createUsuario = (req, res) => {
-  const { email, data_nascimento, cpf } = req.body;
-  Usuario.create({ email, data_nascimento, cpf }, (err, result) => {
+  const {nome, email, data_nascimento, cpf } = req.body;
+  Usuario.create({nome, email, data_nascimento, cpf }, (err, result) => {
     if (err) return res.status(500).send(err);
     res.status(201).send('Usuário criado com sucesso!');
   });
@@ -32,8 +32,8 @@ exports.getUsuarioByCPF = (req, res) => {
 
 
 exports.updateUsuario = (req, res) => {
-  const { email, data_nascimento, cpf } = req.body;
-  Usuario.update(req.params.idusuario, { email, data_nascimento, cpf }, (err, result) => {
+  const {nome, email, data_nascimento, cpf } = req.body;
+  Usuario.update(req.params.idusuario, {nome, email, data_nascimento, cpf }, (err, result) => {
     if (err) return res.status(500).send(err);
     res.send('Usuário atualizado com sucesso!');
   });

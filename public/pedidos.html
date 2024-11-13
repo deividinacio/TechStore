@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Pedidos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container-lista-pedidos">
+      <h1>Sua Lista de Pedidos</h1>
+      <table id="pedidos-table" border="1">
+        <thead>
+          <tr>
+            <!-- <th>Nome</th> -->
+            <!-- <th>Email</th> -->
+            <!-- <th>CPF</th> -->
+            <th>Produto</th>
+            <th>Preço Unidade</th>
+            <th>Quantidade</th>
+            <th>Categoria</th>
+            <th>Data/Hora Pedido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Os pedidos serão inseridos aqui -->
+        </tbody>
+      </table>
+      <button onclick="window.location.href='produtos.html'">Voltar para Produtos</button>
+  </div>
+
+  <script>
+    async function carregarPedidos() {
+      const userID = sessionStorage.getItem('userID');
+      
+      if (!userID) {
+        alert('Usuário não autenticado!');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/pedidos?userID=${userID}`);
+        const pedidos = await response.json();
+        
+        if (response.ok) {
+          const tabela = document.getElementById('pedidos-table').querySelector('tbody');
+          tabela.innerHTML = '';
+          
+          pedidos.forEach(pedido => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${pedido.nome_produto}</td>
+              <td>R$ ${pedido.preco}</td>
+              <td>${pedido.quantidade}</td>
+              <td>${pedido.categoria}</td>
+              <td>${formatarDataHora (pedido.data_pedido)}</td>
+            `;
+            tabela.appendChild(row);
+          });
+        } else {
+          alert('Erro ao carregar pedidos: ' + pedidos.message);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar pedidos:', error);
+        alert('Erro ao carregar pedidos.');
+      }
+    }
+
+    carregarPedidos();
+
+    //formata data para mes ano e dia 
+    function formatarDataHora(dataISO) {
+    const data = new Date(dataISO);
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês de 0-11 para 1-12
+    const dia = String(data.getDate()).padStart(2, '0'); // Dia com dois dígitos
+    const horas = String(data.getHours()).padStart(2, '0'); // Horas com dois dígitos
+    const minutos = String(data.getMinutes()).padStart(2, '0'); // Minutos com dois dígitos
+    const segundos = String(data.getSeconds()).padStart(2, '0'); // Segundos com dois dígitos
+    
+    //return `${ano}-${mes}-${dia} ${horas}:${minutos}:${segundos}`; // Retorna no formato YYYY-MM-DD HH:MM:SS
+    return `${dia}-${mes}-${ano} ${horas}:${minutos}`;
+}
+
+
+  </script>
+</body>
+</html>
